@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import br.com.gomes.movie.dto.IntervaloPremiosDTO;
 import br.com.gomes.movie.dto.MovieInfoDTO;
 import br.com.gomes.movie.dto.ResultadoPremioDTO;
+import br.com.gomes.movie.dto.StatusDTO;
 import br.com.gomes.movie.entity.Premios;
 import br.com.gomes.movie.repository.PremioRepository;
 import br.com.gomes.movie.services.port.PremioServicePort;
@@ -89,6 +90,17 @@ public class PremioService implements PremioServicePort{
 		intervaloDto.setMax( lista.stream().filter(m -> m.getInterval() == maxInterval).collect(Collectors.toList())  );
 		
 		return intervaloDto;
+	}
+
+
+	@Override
+	public StatusDTO removeAll() {
+		try {
+			repository.deleteAll();
+		}catch (Exception e) {
+			return new StatusDTO("Erro no processo de Delete All", false);
+		}
+		return new StatusDTO("Delete All realizado com sucesso", true);
 	}
 	
 	

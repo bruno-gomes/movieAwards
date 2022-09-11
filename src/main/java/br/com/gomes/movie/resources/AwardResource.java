@@ -6,8 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ import br.com.gomes.movie.services.exception.FileExtensionException;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
+@RequestMapping("/movie-awards/movie")
 public class AwardResource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AwardResource.class);
@@ -46,7 +49,7 @@ public class AwardResource {
 				return ResponseEntity.badRequest().body(new StatusDTO(e.getMessage()));
 
 			}
-			return ResponseEntity.ok().body(new StatusDTO("Arquivo salvo com sucesso"));
+			return ResponseEntity.ok().body(new StatusDTO("Arquivo salvo com sucesso", true));
 		}
 
 	}
@@ -61,5 +64,17 @@ public class AwardResource {
 		
 		return ResponseEntity.ok().body(intevaloPremiosDto);
 	}
+	
+	@ApiOperation(value = "Remove todos os registros da base")
+	@CrossOrigin
+	@DeleteMapping("/delete/all")
+	public ResponseEntity<StatusDTO> removeAll(){
+		
+		StatusDTO statusResponse = premioService.removeAll();
+		
+		return statusResponse.isSuccessProcess() ?  ResponseEntity.ok().body(statusResponse) : ResponseEntity.badRequest().body(statusResponse);
+	}
+	
+	
 
 }
