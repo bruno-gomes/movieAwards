@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.gomes.movie.dto.IntervaloPremiosDTO;
+import br.com.gomes.movie.dto.StatusDTO;
 import br.com.gomes.movie.services.FileValidationService;
 import br.com.gomes.movie.services.PremioService;
 import br.com.gomes.movie.services.exception.FileExtensionException;
@@ -32,20 +33,20 @@ public class AwardResource {
 	@ApiOperation(value = "Upload de lista de premiacao de filmes do Golden Raspberry Awards CSV")
 	@CrossOrigin
 	@PostMapping("/uploadFile")
-	public ResponseEntity<Boolean> uploadFile(@RequestParam("file") MultipartFile file){
-		Boolean resultado = true;
+	public ResponseEntity<StatusDTO> uploadFile(@RequestParam("file") MultipartFile file){
 		String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 		if (extension.equals("csv") == false) {
 			LOG.error("Arquivo invalido esperado csv, arquivo recebido: " + extension);
 			throw new FileExtensionException("Arquivo invalido esperado csv, arquivo recebido: " + extension);
 		} else {
 			try {
-				resultado = fileValidationService.validateFile(file);
+				fileValidationService.validateFile(file);
 			} catch (Exception e) {
-				throw new FileExtensionException("Erro de IO: " + e.getMessage());
+				LOG.error("Erro de IO: " + e.getMessage());
+				return ResponseEntity.badRequest().body(new StatusDTO(e.getMessage()));
 
 			}
-			return ResponseEntity.ok().body(resultado);
+			return ResponseEntity.ok().body(new StatusDTO("Arquivo salvo com sucesso"));
 		}
 
 	}

@@ -1,7 +1,13 @@
 package br.com.gomes.movie.dto;
 
-public class ResultadoPremioDTO {
+import java.io.Serializable;
 
+public class ResultadoPremioDTO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7438428877899508231L;
 	private String producer;
 	private int interval;
 	private int previusWin;

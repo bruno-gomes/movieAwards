@@ -1,7 +1,13 @@
 package br.com.gomes.movie.dto;
 
-public class MovieInfoDTO {
+import java.io.Serializable;
 
+public class MovieInfoDTO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2814849892062387534L;
 	private String year;
 	private String title;
 	private String studios;

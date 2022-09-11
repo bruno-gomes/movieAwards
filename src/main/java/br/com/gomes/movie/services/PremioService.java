@@ -3,7 +3,6 @@ package br.com.gomes.movie.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,8 +85,8 @@ public class PremioService implements PremioServicePort{
 		int maxInterval = lista.stream().mapToInt(v -> v.getInterval()).max().orElse(-1);
 		int minInterval = lista.stream().mapToInt(v -> v.getInterval()).min().orElse(-1);
 		
-		intervaloDto.setMin( lista.stream().filter(m -> m.getInterval() == minInterval).toList()  );
-		intervaloDto.setMax( lista.stream().filter(m -> m.getInterval() == maxInterval).toList()  );
+		intervaloDto.setMin( lista.stream().filter(m -> m.getInterval() == minInterval).collect(Collectors.toList())  );
+		intervaloDto.setMax( lista.stream().filter(m -> m.getInterval() == maxInterval).collect(Collectors.toList())  );
 		
 		return intervaloDto;
 	}
