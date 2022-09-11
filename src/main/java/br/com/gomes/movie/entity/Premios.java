@@ -5,12 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Entity(name="RaspberryAward")
+@Entity//(name="RaspberryAward")
+@Table(name = "RaspberryAward")
 public class Premios {
 
 	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@GeneratedValue(strategy= GenerationType.AUTO)
 	private Long id;
 	
 	@Column(name="year")
@@ -27,6 +29,17 @@ public class Premios {
 	
 	@Column(name="winner")
 	private boolean winner;
+	
+	public Premios(int year, String title, String studios, String producers, boolean winner) {
+		this.year = year;
+		this.title = title;
+		this.studios = studios;
+		this.producers = producers;
+		this.winner = winner;
+	}
+	
+	public Premios() {		
+	}
 
 	public int getYear() {
 		return year;

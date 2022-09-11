@@ -1,17 +1,23 @@
 package br.com.gomes.movie.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.gomes.movie.dto.IntervaloPremiosDTO;
 import br.com.gomes.movie.dto.MovieInfoDTO;
+import br.com.gomes.movie.dto.ResultadoPremioDTO;
 import br.com.gomes.movie.entity.Premios;
 import br.com.gomes.movie.repository.PremioRepository;
+import br.com.gomes.movie.services.port.PremioServicePort;
+import br.com.gomes.movie.utils.PremioComprator;
 
 @Service
-public class PremioService {
+public class PremioService implements PremioServicePort{
 	
 	@Autowired
 	private PremioRepository repository;
@@ -34,5 +40,58 @@ public class PremioService {
 		
 		repository.saveAll(premios);
 	}
+
+
+	@Override
+	public IntervaloPremiosDTO buscaGanhadoresPremios() {
+		
+		List<Premios> allWinnersList = repository.findByWinner(true);
+		IntervaloPremiosDTO intervaloPremios = null;
+		
+		intervaloPremios = processaGanhadores(allWinnersList);
+		
+		
+		return intervaloPremios;
+	}
+	
+	private IntervaloPremiosDTO processaGanhadores(List<Premios> allWinnersList) {
+		IntervaloPremiosDTO intervaloDto = new IntervaloPremiosDTO();
+		List<ResultadoPremioDTO> lista = new ArrayList<>();
+		ResultadoPremioDTO resultadoPremioDto =  null;
+		
+		/*allWinnersList.stream().map(line -> {
+			
+			Stream<Premios> subListFiltter = allWinnersList.stream().filter(subItem -> subItem.getProducers().equalsIgnoreCase(line.getProducers()));
+						
+		});*/
+		
+		allWinnersList.sort(new PremioComprator());
+		
+		for (int indexMaster = 0; indexMaster < allWinnersList.size(); indexMaster++) {
+			
+			for (int subIndex = indexMaster+1; subIndex < allWinnersList.size(); subIndex++) {
+				
+				if(allWinnersList.get(indexMaster).getProducers().contains(allWinnersList.get(subIndex).getProducers())) {
+					resultadoPremioDto = new ResultadoPremioDTO();
+					 resultadoPremioDto.setFollowingWin(allWinnersList.get(subIndex).getYear());
+					 resultadoPremioDto.setPreviusWin(allWinnersList.get(indexMaster).getYear());
+					 resultadoPremioDto.setInterval( allWinnersList.get(subIndex).getYear() - allWinnersList.get(indexMaster).getYear());
+					 resultadoPremioDto.setProducer(allWinnersList.get(indexMaster).getProducers());
+					 
+					 lista.add(resultadoPremioDto);
+				}
+			}
+		}
+		
+		int maxInterval = lista.stream().mapToInt(v -> v.getInterval()).max().orElse(-1);
+		int minInterval = lista.stream().mapToInt(v -> v.getInterval()).min().orElse(-1);
+		
+		intervaloDto.setMin( lista.stream().filter(m -> m.getInterval() == minInterval).toList()  );
+		intervaloDto.setMax( lista.stream().filter(m -> m.getInterval() == maxInterval).toList()  );
+		
+		return intervaloDto;
+	}
+	
+	
 
 }
