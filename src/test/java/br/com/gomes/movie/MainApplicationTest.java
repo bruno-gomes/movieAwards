@@ -2,9 +2,6 @@ package br.com.gomes.movie;
 
 import static org.junit.Assert.assertEquals;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +21,6 @@ import org.springframework.util.MultiValueMap;
 import br.com.gomes.movie.dto.IntervaloPremiosDTO;
 import br.com.gomes.movie.dto.StatusDTO;
 import br.com.gomes.movie.repository.PremioRepository;
-import br.com.gomes.movie.services.FileValidationService;
-import br.com.gomes.movie.services.PremioService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,12 +34,6 @@ public class MainApplicationTest {
 	
 	@Autowired
 	private TestRestTemplate restTemplate;
-	
-	@Autowired
-	private FileValidationService serviceFileValidation;
-	
-	@Autowired
-	private PremioService servicePremio;
 	
 	@Autowired
 	private PremioRepository repository;
@@ -74,7 +63,7 @@ public class MainApplicationTest {
 		
 		assertEquals(200, intervaloPremioResponse.getStatusCodeValue());
 		assertEquals(1 , intervaloPremioResponse.getBody().getMin().get(0).getInterval() );
-		assertEquals(99 , intervaloPremioResponse.getBody().getMax().get(0).getInterval() );
+		assertEquals(13 , intervaloPremioResponse.getBody().getMax().get(0).getInterval() );
 		
 		//clear all
 		repository.deleteAll();
@@ -83,7 +72,7 @@ public class MainApplicationTest {
 	
 	
 	private Resource getTestFile() {
-		String pathDirectory = getClass().getClassLoader().getResource("files/cenarioTesteIntegrado.csv").getFile();
+		String pathDirectory = getClass().getClassLoader().getResource("files/movielist.csv").getFile();
 		return new FileSystemResource(pathDirectory);
 	}
 	

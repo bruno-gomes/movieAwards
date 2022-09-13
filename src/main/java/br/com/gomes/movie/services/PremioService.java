@@ -1,6 +1,7 @@
 package br.com.gomes.movie.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,17 +70,26 @@ public class PremioService implements PremioServicePort{
 		
 		for (int indexMaster = 0; indexMaster < allWinnersList.size(); indexMaster++) {
 			
+			List<String> masterProducesName = Arrays.asList(allWinnersList.get(indexMaster).getProducers().split(",|and"));
 			for (int subIndex = indexMaster+1; subIndex < allWinnersList.size(); subIndex++) {
 				
-				if(allWinnersList.get(indexMaster).getProducers().contains(allWinnersList.get(subIndex).getProducers())) {
-					resultadoPremioDto = new ResultadoPremioDTO();
-					 resultadoPremioDto.setFollowingWin(allWinnersList.get(subIndex).getYear());
-					 resultadoPremioDto.setPreviusWin(allWinnersList.get(indexMaster).getYear());
-					 resultadoPremioDto.setInterval( allWinnersList.get(subIndex).getYear() - allWinnersList.get(indexMaster).getYear());
-					 resultadoPremioDto.setProducer(allWinnersList.get(indexMaster).getProducers());
-					 
-					 lista.add(resultadoPremioDto);
-				}
+				
+				List<String> subProducesName = Arrays.asList(allWinnersList.get(subIndex).getProducers().split(",|and"));
+				
+					for (String masterName : masterProducesName) {
+						for (String subName : subProducesName) {
+							if(masterName.trim().equalsIgnoreCase(subName.trim())){
+								resultadoPremioDto = new ResultadoPremioDTO();
+								resultadoPremioDto.setFollowingWin(allWinnersList.get(subIndex).getYear());
+								resultadoPremioDto.setPreviusWin(allWinnersList.get(indexMaster).getYear());
+								resultadoPremioDto.setInterval( allWinnersList.get(subIndex).getYear() - allWinnersList.get(indexMaster).getYear());
+								resultadoPremioDto.setProducer(masterName);
+								
+								lista.add(resultadoPremioDto);
+							}
+						}
+					}
+					
 			}
 		}
 		
